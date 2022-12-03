@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>RSA</title>
+</head>
+<body>
+P:<input id="p" type="number" value="3">Q:<input id="q" type="number" value="11"><button onclick="work()">Зашифровать</button><br>
+<p id="f"></p>
+<p id="ff"></p>
+<script type="text/javascript">
+	var openKey = [];
+	var secretKey = [];
+	var c = [];
+	var arr_en = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+	function work(){
+		var p = document.getElementById('p').value;
+		var q = document.getElementById('q').value;
+		var p1 = document.getElementById('f');
+		var n = p*q;
+		console.log("n="+n);
+		var v = (p-1)*(q-1);
+		console.log("(p-1)*(q-1)=v="+v);
+		var arr = [];
+		nextPrime:
+		for(var i=2;i<v;i++){
+			for(var j=2;j<i;j++) {
+				if(i%j==0) {
+					continue nextPrime;
+				}
+			}
+			arr.push(i);
+		}
+		console.log("Простые числа: "+arr);
+		function isCoprime (a, b) {
+    		var num;
+    		while ( b ) {
+        		num = a % b;
+        		a = b;
+        		b = num;
+    		}
+    		if (Math.abs(a) == 1) {
+        		return true;
+    		}
+    		return false;
+		}
+		var d;
+		for(var i=0;i<arr.length;i++){
+			if(isCoprime(v,arr[i])){
+				d = arr[i];
+				console.log("d="+d);
+				break;
+			}
+		}
+
+		var e;
+		for(var i=2;i<v;i++) {
+				if((d*i)%v==1) {
+					e = i;
+					break;
+			}
+		}
+		console.log("e="+e);
+
+		var m = prompt("Введите сообщение");
+		var mes = [];
+
+		for(var i=0;i<m.length;i++) {
+			mes[i] = arr_en.indexOf(m[i]);
+		}
+		console.log("mes="+mes);
+
+		for(var i=0;i<mes.length;i++) {
+			c[i] = Math.pow(mes[i],e)%n;
+		}
+
+		p1.innerHTML = "Зашифрованное сообщение: "+c+"<br><button onclick='work2()'>Расшифровать</button>";
+
+		openKey = [e,n];
+		secretKey = [d,n];
+	}
+	function work2() {
+		var p = document.getElementById("ff")
+		var m = [];
+		for(var i=0;i<c.length;i++) {
+			m[i] = Math.pow(c[i],secretKey[0])%secretKey[1];
+		}
+
+		var mes = "";
+
+		for(var i=0;i<m.length;i++) {
+			mes += arr_en[m[i]];
+		}
+
+		p.innerHTML = "Расшифрованное сообщение: "+mes;
+		console.log("m="+m);
+	}
+</script>
+</body>
+</html>
